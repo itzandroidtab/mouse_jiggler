@@ -26,6 +26,7 @@ int main() {
     // init the usb hardware
     usb::init();
 
+    // wait until we are configured. (this happens after the host has connected)
     while (!usb::device::is_configured<usb>()) {
         klib::delay<klib::io::systick>(klib::time::ms(10));
         klib::cout << ".";
@@ -33,6 +34,7 @@ int main() {
     klib::cout << klib::endl;
     klib::cout << "Connected to host" << klib::endl;
 
+    // Keep moving the mouse every 10 seconds
     while (true) {
         klib::cout << "Sending move command" << klib::endl;
         usb::device::write<usb>(0x00, -1, 0);
