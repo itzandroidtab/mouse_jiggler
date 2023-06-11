@@ -23,7 +23,7 @@ jobs:
 
     steps:
       - name: Fetching klib
-        uses: actions/checkout@3
+        uses: actions/checkout@v3
         with:
           repository: itzandroidtab/klib
       
