@@ -27,7 +27,7 @@ jobs:
         with:
           repository: itzandroidtab/klib
       
-      - name: removing exaple project content
+      - name: removing example project content
         # create a main file that includes all the header files for the current target
         run: |
           rm -rf ${{github.workspace}}/project/*
