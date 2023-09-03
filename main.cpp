@@ -21,7 +21,7 @@ int main() {
     target::io::system::clock::set_usb<12'000'000>();
 
     // get the usb hardware
-    using usb = target::io::usb<target::io::periph::lqfp_80::usb0, klib::usb::device::mouse_hid, target::irq>;
+    using usb = target::io::usb<target::io::periph::lqfp_80::usb0, klib::usb::device::mouse_hid>;
 
     // init the usb hardware
     usb::init();
