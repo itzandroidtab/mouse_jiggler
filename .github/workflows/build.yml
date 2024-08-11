@@ -1,16 +1,16 @@
-name: project using klib library
+name: totp
 
 on:
   workflow_dispatch:
-
+  
   push:
-    branches: [ master ]
+    branches: [ '**' ]
   pull_request:
     branches: [ master ]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
-  BUILD_TYPE: Release
+  BUILD_TYPE: RelWithDebInfo
 
 jobs:
   build:
@@ -48,46 +48,27 @@ jobs:
         run: arm-none-eabi-gcc --version
 
       - name: getting arm headers
+        uses: actions/checkout@v3
+        with:
+          repository: ARM-software/CMSIS_5
+          ref: 'develop'
+          fetch-depth: '1'
+          path: './CMSIS'
+
+      - name: moving arm headers
         run: |
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/cachel1_armv7.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/cmsis_armcc.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/cmsis_armclang.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/cmsis_armclang_ltm.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/cmsis_compiler.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/cmsis_gcc.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/cmsis_iccarm.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/cmsis_version.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/core_armv81mml.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/core_armv8mbl.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/core_armv8mml.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/core_cm0.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/core_cm0plus.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/core_cm1.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/core_cm23.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/core_cm3.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/core_cm33.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/core_cm35p.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/core_cm4.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/core_cm55.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/core_cm7.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/core_sc000.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/core_sc300.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/core_starmc1.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/mpu_armv7.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/mpu_armv8.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/pmu_armv8.h -P ${{github.workspace}}/targets/arm/
-          wget -q https://github.com/ARM-software/CMSIS_5/raw/develop/CMSIS/Core/Include/tz_context.h -P ${{github.workspace}}/targets/arm/
+          cp ${{github.workspace}}/CMSIS/CMSIS/Core/Include/* ${{github.workspace}}/targets/arm/
 
       - name: generating header
         run: |
-          mkdir -p ${{github.workspace}}/targets/${{matrix.cpu}}/docs
-          wget -q -O ${{github.workspace}}/targets/${{matrix.cpu}}/docs/${{matrix.cpu}}.svd https://raw.githubusercontent.com/itzandroidtab/klib-svd/master/${{matrix.cpu}}.svd
+          mkdir -p ${{github.workspace}}/targets/chip/${{matrix.cpu}}/docs
+          wget -q -O ${{github.workspace}}/targets/chip/${{matrix.cpu}}/docs/${{matrix.cpu}}.svd https://raw.githubusercontent.com/itzandroidtab/klib-svd/master/${{matrix.cpu}}.svd
           wget -q -O ${{github.workspace}}/svdconv.tbz2 https://github.com/Open-CMSIS-Pack/devtools/releases/download/tools%2Fsvdconv%2F3.3.44/svdconv-3.3.44-linux64-amd64.tbz2
           tar -xf ${{github.workspace}}/svdconv.tbz2 
           chmod +x ${{github.workspace}}/svdconv
           
-          ${{github.workspace}}/svdconv ${{github.workspace}}/targets/${{matrix.cpu}}/docs/${{matrix.cpu}}.svd --generate=header -o ${{github.workspace}}/targets/${{matrix.cpu}}/ > /dev/null || true
-          sed -i '/#include "system_/d' ${{github.workspace}}/targets/${{matrix.cpu}}/${{matrix.cpu}}.h
+          ${{github.workspace}}/svdconv ${{github.workspace}}/targets/chip/${{matrix.cpu}}/docs/${{matrix.cpu}}.svd --generate=header -o ${{github.workspace}}/targets/chip/${{matrix.cpu}}/ > /dev/null || true
+          sed -i '/#include "system_/d' ${{github.workspace}}/targets/chip/${{matrix.cpu}}/${{matrix.cpu}}.h
       
       - name: Configure CMake
         # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
