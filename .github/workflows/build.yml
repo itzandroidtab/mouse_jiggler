@@ -1,6 +1,8 @@
 name: project using klib library
 
 on:
+  workflow_dispatch:
+
   push:
     branches: [ master ]
   pull_request:
