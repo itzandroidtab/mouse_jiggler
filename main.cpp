@@ -28,7 +28,7 @@ int main() {
 
     // wait until we are configured. (this happens after the host has connected)
     while (!usb::device::is_configured<usb>()) {
-        klib::delay<klib::io::systick>(klib::time::ms(10));
+        klib::delay(klib::time::ms(10));
         klib::cout << ".";
     }
     klib::cout << klib::endl;
@@ -40,6 +40,6 @@ int main() {
         usb::device::write<usb>(0x00, -1, 0);
         usb::device::write<usb>(0x00, 1, 0);
 
-        klib::delay<klib::io::systick>(klib::time::s{10});
+        klib::delay(klib::time::s{10});
     }
 }
