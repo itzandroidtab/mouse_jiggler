@@ -1,4 +1,4 @@
-name: totp
+name: project using klib library
 
 on:
   workflow_dispatch:
