@@ -3,11 +3,8 @@
 #include <klib/stream.hpp>
 #include <klib/usb/device/mouse.hpp>
 
-#include <io/can.hpp>
 #include <io/usb.hpp>
 #include <io/system.hpp>
-#include <io/power.hpp>
-#include <io/pins.hpp>
 
 namespace target = klib::target;
 
@@ -16,7 +13,7 @@ int main() {
     target::io::system::trace::enable<true>();
     
     klib::cout << "Booting" << klib::endl;
-
+    
     // configure the usb pll
     target::io::system::clock::set_usb<12'000'000>();
 
