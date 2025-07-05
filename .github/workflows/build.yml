@@ -25,7 +25,7 @@ jobs:
 
     steps:
       - name: Fetching klib
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: itzandroidtab/klib
       
@@ -35,7 +35,7 @@ jobs:
           rm -rf ${{github.workspace}}/project/*
 
       - name: Fetching project
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: "${{github.workspace}}/project/"
 
@@ -48,7 +48,7 @@ jobs:
         run: arm-none-eabi-gcc --version
 
       - name: getting arm headers
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ARM-software/CMSIS_5
           ref: 'develop'
@@ -80,7 +80,7 @@ jobs:
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
       - name: Uploading artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         # upload the elf file as a artifact
         with:
           name: ${{matrix.cpu}}
